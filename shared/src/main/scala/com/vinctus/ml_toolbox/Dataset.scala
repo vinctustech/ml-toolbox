@@ -1,24 +1,55 @@
 package com.vinctus.ml_toolbox
 
+import xyz.hyperreal.csv.CSVRead
+import xyz.hyperreal.matrix.Matrix
+import xyz.hyperreal.table.TextTable
+
 import scala.collection.immutable.ArraySeq
 
-object Dataset {
+class Dataset private (columns: ArraySeq[String], columnMap: Map[String, Int], val matrix: Matrix[Double])
+    extends (Int => Dataset) {
 
-  def fromCSV(file: String) = {}
+  require(columns.nonEmpty, "require at least one column")
+  require(matrix.cols == columns.length, "require number of data columns equal number of column names")
+
+  override def apply(row: Int): Dataset = new Dataset(columns, columnMap, matrix.row(row))
+
+  override def toString: String = {
+    new TextTable() {
+      headerSeq(columns)
+
+      for (i <- 1 to matrix.rows)
+        rowSeq(matrix.row(i))
+
+      1 to matrix.cols foreach rightAlignment
+    }.toString
+
+  }
 
 }
 
-class Dataset(headings: Seq[String], rows: Seq[ArraySeq[Double]]) {
+object Dataset {
 
-  require(headings.nonEmpty, "require at least one heading")
+  def apply(columns: collection.Seq[String], data: Matrix[Double]): Dataset = {
+    val cols = columns to ArraySeq
 
-  private val headingsLen = headings.length
+    new Dataset(cols, cols zip cols.indices toMap, data)
+  }
 
-  require(rows.forall(_.length == headingsLen), "require row lengths equal number of headings")
+  def apply(columns: collection.Seq[String], data: Seq[Seq[Any]]): Dataset = {
+    val cols = columns to ArraySeq
+    val mat = Matrix.fromArray(data map (_ map (_.asInstanceOf[Number].doubleValue) toArray) toArray)
 
-  private val headingMap: Map[String, Int] = headings zip headings.indices toMap
-  private val data = rows to ArraySeq
+    new Dataset(cols, cols zip cols.indices toMap, mat)
+  }
 
-  override def toString: String = super.toString
+  def fromCSV(file: String, columns: collection.Seq[String] = null): Dataset = {
+    val csv = CSVRead.fromFile(file).get
+    val (header, data) =
+      if (columns eq null) (csv.head, csv drop 1)
+      else (columns, csv)
+
+    Dataset(header, data map (_ map (_.toDouble)))
+  }
 
 }
