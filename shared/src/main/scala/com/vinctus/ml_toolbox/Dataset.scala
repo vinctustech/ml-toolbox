@@ -14,7 +14,7 @@ class Dataset private (columns: ArraySeq[String], columnMap: Map[String, Int], v
 
   override def apply(row: Int): Dataset = new Dataset(columns, columnMap, matrix.row(row))
 
-  override def toString: String = {
+  override def toString: String =
     new TextTable() {
       headerSeq(columns)
 
@@ -23,8 +23,6 @@ class Dataset private (columns: ArraySeq[String], columnMap: Map[String, Int], v
 
       1 to matrix.cols foreach rightAlignment
     }.toString
-
-  }
 
 }
 
