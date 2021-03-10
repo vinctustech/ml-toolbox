@@ -6,40 +6,41 @@ import xyz.hyperreal.table.TextTable
 
 import scala.collection.immutable.ArraySeq
 
-class Dataset private (columns: ArraySeq[String], columnMap: Map[String, Int], val matrix: Matrix[Double])
+class Dataset private (columns: ArraySeq[String], columnMap: Map[String, Int], val data: Matrix[Double])
     extends (Int => Dataset) {
+  def this(columns: collection.Seq[String], data: Matrix[Double]) =
+    this(columns to ArraySeq, columns.zipWithIndex toMap, data)
 
   require(columns.nonEmpty, "require at least one column")
-  require(matrix.cols == columns.length, "require number of data columns equal number of column names")
+  require(data.cols == columns.length, "require number of data columns equal number of column names")
 
-  override def apply(row: Int): Dataset = new Dataset(columns, columnMap, matrix.row(row))
+  def apply(ridx: Int): Dataset = new Dataset(columns, columnMap, row(ridx))
+
+  def rows: Int = data.rows
+
+  def cols: Int = data.cols
+
+  def row(ridx: Int): Vector = data.row(ridx)
 
   override def toString: String =
     new TextTable() {
       headerSeq(columns)
 
-      for (i <- 1 to matrix.rows)
-        rowSeq(matrix.row(i))
+      for (i <- 1 to data.rows)
+        rowSeq(data.row(i))
 
-      1 to matrix.cols foreach rightAlignment
+      1 to data.cols foreach rightAlignment
     }.toString
 
 }
 
 object Dataset {
 
-  def apply(columns: collection.Seq[String], data: Matrix[Double]): Dataset = {
-    val cols = columns to ArraySeq
+  def apply(columns: collection.Seq[String], data: Matrix[Double]): Dataset =
+    new Dataset(columns, data)
 
-    new Dataset(cols, cols zip cols.indices toMap, data)
-  }
-
-  def apply(columns: collection.Seq[String], data: Seq[Seq[Any]]): Dataset = {
-    val cols = columns to ArraySeq
-    val mat = Matrix.fromArray(data map (_ map (_.asInstanceOf[Number].doubleValue) toArray) toArray)
-
-    new Dataset(cols, cols zip cols.indices toMap, mat)
-  }
+  def apply(columns: collection.Seq[String], data: Seq[Seq[Any]]): Dataset =
+    new Dataset(columns, Matrix.fromArray(data map (_ map (_.asInstanceOf[Number].doubleValue) toArray) toArray))
 
   def fromCSV(file: String, columns: collection.Seq[String] = null): Dataset = {
     val csv = CSVRead.fromFile(file).get
