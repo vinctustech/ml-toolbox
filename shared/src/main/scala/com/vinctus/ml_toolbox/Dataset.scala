@@ -14,13 +14,13 @@ class Dataset private (columns: ArraySeq[String], columnMap: Map[String, Int], v
   require(columns.nonEmpty, "require at least one column")
   require(data.cols == columns.length, "require number of data columns equal number of column names")
 
-  def apply(ridx: Int): Dataset = new Dataset(columns, columnMap, row(ridx))
+  def apply(ridx: Int): Dataset = new Dataset(columns, columnMap, data.row(ridx))
 
   def rows: Int = data.rows
 
   def cols: Int = data.cols
 
-  def row(ridx: Int): Vector = data.row(ridx)
+  def row(ridx: Int): (Vector, Double) = (data.row(ridx).removeCol(data.cols), data.row(ridx).last)
 
   override def toString: String =
     new TextTable() {

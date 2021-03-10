@@ -2,7 +2,7 @@ package com.vinctus.ml_toolbox
 
 object Main extends App {
 
-  val ds = Dataset(Seq("t", "a"), Seq(Seq(4, 2), Seq(6, 3)))
+  val ds = Dataset(Seq("f", "t"), Seq(Seq(2, 4), Seq(3, 6)))
 //  val ds = Dataset.fromCSV("test")
 
   val model = LinearRegression.train(ds)
