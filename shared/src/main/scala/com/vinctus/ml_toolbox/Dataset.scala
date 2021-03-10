@@ -20,7 +20,9 @@ class Dataset private (columns: ArraySeq[String], columnMap: Map[String, Int], v
 
   def cols: Int = data.cols
 
-  def row(ridx: Int): (Vector, Double) = (data.row(ridx).removeCol(data.cols), data.row(ridx).last)
+  def row(ridx: Int): (Vector, Double) = (data row ridx removeCol data.cols prepend Dataset.ONE, data.row(ridx).last)
+
+  def transform(elem: (Int, Int) => Double) = new Dataset(columns, columnMap, data.build(elem))
 
   override def toString: String =
     new TextTable() {
@@ -35,6 +37,8 @@ class Dataset private (columns: ArraySeq[String], columnMap: Map[String, Int], v
 }
 
 object Dataset {
+
+  private val ONE = Matrix(Seq(1D))
 
   def apply(columns: collection.Seq[String], data: Matrix[Double]): Dataset =
     new Dataset(columns, data)

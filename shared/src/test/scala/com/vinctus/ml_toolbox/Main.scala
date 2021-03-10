@@ -9,5 +9,6 @@ object Main extends App {
 
   println(ds)
   println(model)
+  println(model.predict(Seq(4)))
 
 }
