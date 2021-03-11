@@ -34,16 +34,16 @@ object LinearRegression {
 
 //    println(standardized, m, s)
 
-    val sds = standardized
+    val tds = standardized
 
     var coefs: Vector = Matrix.col(Seq.fill(ds.cols)(0D): _*)
 
     for (_ <- 1 to iterations)
-      coefs -= optimize(sds, coefs, alpha, hypothesis)
+      coefs -= optimize(tds, coefs, alpha, hypothesis)
 
 //    val coefs1 = coefs.drop(1).zipWithIndex map { case (c, i) => c * s(i) + m(i) }
 
-    new LinearRegression(sds, coefs, m, s)
+    new LinearRegression(tds, coefs, m, s)
   }
 
 }
