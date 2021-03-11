@@ -21,9 +21,9 @@ object LinearRegression {
   }
 
   def train(ds: Dataset,
-            alpha: Double = .1,
+            alpha: Double = .5,
             lambda: Double = .5,
-            iterations: Int = 400,
+            iterations: Int = 100,
             optimize: Optimizer = GradientDescent): LinearRegression = {
     require(ds.cols >= 2, "require a dataset with at least two columns to train a model")
 
@@ -32,11 +32,10 @@ object LinearRegression {
       ds.transform((r, c) => /*if (c == ds.data.cols) ds.data(r, c)
           else*/ (ds.data(r, c) - m(c - 1)) / s(c - 1))
 
-    val tds = standardized
     var coefs: Vector = Matrix.col(Seq.fill(ds.cols)(0D): _*)
 
     for (_ <- 1 to iterations)
-      coefs -= optimize(tds, coefs, alpha, hypothesis)
+      coefs -= optimize(standardized, coefs, alpha, hypothesis)
 
     val tcoefs =
       coefs.build({
@@ -52,9 +51,9 @@ object LinearRegression {
 
 class LinearRegression private (ts: Dataset, val coefficients: Vector) {
 
-  def retrain(learningRate: Double = .1,
+  def retrain(learningRate: Double = .5,
               lambda: Double = .5,
-              iterations: Int = 400,
+              iterations: Int = 100,
               optimize: Optimizer): LinearRegression =
     train(ts, learningRate, lambda, iterations, optimize)
 
