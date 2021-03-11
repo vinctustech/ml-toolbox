@@ -16,7 +16,7 @@ object Main extends App {
     for (_ <- 1 to 1000)
       yield {
         val x1 = Random.nextDouble() * 100
-        val x2 = Random.nextDouble() * 100
+        val x2 = Random.nextDouble() * 200 + 50
         val offset = Random.nextDouble() * 2 - 1
         val y = (c0 + c1 * x1 + c2 * x2) + offset
 

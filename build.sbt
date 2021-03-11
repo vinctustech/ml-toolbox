@@ -26,6 +26,7 @@ lazy val ml_toolbox = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(f
   ).
   jvmSettings(
     libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.0.0" % "provided",
+    libraryDependencies += "org.scala-lang.modules" % "scala-swing_2.13" % "3.0.0"
   ).
   nativeSettings(
     nativeLinkStubs := true

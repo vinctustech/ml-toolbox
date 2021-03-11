@@ -18,4 +18,6 @@ package object ml_toolbox {
     math.sqrt((xs map (x => (x - m) * (x - m)) sum) / xs.length)
   }
 
+  def range(xs: Seq[Double]): Double = xs.max - xs.min
+
 }

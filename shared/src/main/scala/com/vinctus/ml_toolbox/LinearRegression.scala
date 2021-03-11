@@ -23,26 +23,46 @@ object LinearRegression {
   def train(ds: Dataset,
             alpha: Double = .5,
             lambda: Double = .5,
-            iterations: Int = 500,
-            descend: GradientDescent = BatchGradientDescent): LinearRegression = {
+            iterations: Int = 200,
+            descend: GradientDescent = BatchGradientDescent,
+            standardize: Boolean = true,
+            standardizeTarget: Boolean = true): LinearRegression = {
     require(ds.cols >= 2, "require a dataset with at least two columns to train a model")
 
-    val (m, s) = 1 to /*until*/ ds.cols map ds.data.col map (c => (mean(c), sd(c))) unzip
-    val standardized =
-      ds.transform((r, c) => /*if (c == ds.data.cols) ds.data(r, c)
-          else*/ (ds.data(r, c) - m(c - 1)) / s(c - 1))
+    val (m, s) =
+      if (standardize)
+        (if (standardizeTarget) 1 to ds.cols else 1 until ds.cols) map ds.data.col map (c => (mean(c), sd(c))) unzip
+      else (null, null)
+    val transformed =
+      if (standardize)
+        ds.transform(
+          (r, c) =>
+            if (!standardizeTarget && c == ds.data.cols) ds.data(r, c)
+            else (ds.data(r, c) - m(c - 1)) / s(c - 1))
+      else
+        ds
 
     var coefs: Vector = Matrix.col(Seq.fill(ds.cols)(0D): _*)
 
     for (_ <- 1 to iterations)
-      coefs -= descend(standardized, coefs, alpha, hypothesis)
+      coefs -= descend(transformed, coefs, alpha, hypothesis)
 
     val tcoefs =
-      coefs.build({
-        case (1, _) =>
-          coefs(1, 1) * s.last + m.last - (2 to coefs.rows).map(i => coefs(i, 1) * s.last * m(i - 2) / s(i - 2)).sum
-        case (i, _) => coefs(i, 1) * s.last / s(i - 2)
-      })
+      if (standardize)
+        if (standardizeTarget)
+          coefs.build({
+            case (1, _) =>
+              coefs(1, 1) * s.last + m.last - (2 to coefs.rows).map(i => coefs(i, 1) * s.last * m(i - 2) / s(i - 2)).sum
+            case (i, _) => coefs(i, 1) * s.last / s(i - 2)
+          })
+        else
+          coefs.build({
+            case (1, _) =>
+              coefs(1, 1) - (2 to coefs.rows).map(i => coefs(i, 1) * m(i - 2) / s(i - 2)).sum
+            case (i, _) => coefs(i, 1) / s(i - 2)
+          })
+      else
+        coefs
 
     new LinearRegression(ds, tcoefs)
   }
