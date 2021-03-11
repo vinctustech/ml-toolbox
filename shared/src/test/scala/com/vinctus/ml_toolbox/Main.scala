@@ -7,10 +7,10 @@ object Main extends App {
   val ds = Dataset(Seq("f", "t"), Seq(Seq(2, 4), Seq(3, 6)))
 //  val ds = Dataset.fromCSV("test")
 
-  val model = LinearRegression.train(ds)
+  val model = LinearRegression train ds
 
   println(ds)
   println(model)
-  println(model.predict(Matrix(Seq(4))))
+  println(model predict Seq(4))
 
 }

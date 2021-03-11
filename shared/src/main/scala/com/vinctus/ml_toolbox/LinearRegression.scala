@@ -24,7 +24,7 @@ object LinearRegression {
             alpha: Double = .5,
             lambda: Double = .5,
             iterations: Int = 100,
-            optimize: Optimizer = GradientDescent): LinearRegression = {
+            descend: GradientDescent = BatchGradientDescent): LinearRegression = {
     require(ds.cols >= 2, "require a dataset with at least two columns to train a model")
 
     val (m, s) = 1 to /*until*/ ds.cols map ds.data.col map (c => (mean(c), sd(c))) unzip
@@ -35,7 +35,7 @@ object LinearRegression {
     var coefs: Vector = Matrix.col(Seq.fill(ds.cols)(0D): _*)
 
     for (_ <- 1 to iterations)
-      coefs -= optimize(standardized, coefs, alpha, hypothesis)
+      coefs -= descend(standardized, coefs, alpha, hypothesis)
 
     val tcoefs =
       coefs.build({
@@ -54,14 +54,14 @@ class LinearRegression private (ts: Dataset, val coefficients: Vector) {
   def retrain(learningRate: Double = .5,
               lambda: Double = .5,
               iterations: Int = 100,
-              optimize: Optimizer): LinearRegression =
+              optimize: GradientDescent): LinearRegression =
     train(ts, learningRate, lambda, iterations, optimize)
 
   def summary(): Unit = {}
 
   def cost(ds: Dataset): Double = { LinearRegression.cost(ds, coefficients) }
 
-  def predict(features: Vector): Double = LinearRegression.hypothesis(coefficients, features.prepend(ONE))
+  def predict(features: Seq[Double]): Double = LinearRegression.hypothesis(coefficients, Matrix(features).prepend(ONE))
 
   override def toString: String = s"coefficients: [${coefficients mkString ", "}], cost: ${cost(ts)}"
 }
