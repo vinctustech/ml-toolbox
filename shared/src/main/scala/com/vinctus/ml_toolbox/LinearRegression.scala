@@ -41,8 +41,8 @@ object LinearRegression {
     val tcoefs =
       coefs.build({
         case (1, _) =>
-          coefs(1, 1) * s.last + m.last - (2 to coefs.rows).map(i => coefs(i, 1) * s.last * m(i - 1) / s(i - 1)).sum
-        case (i, _) => coefs(i, 1) * s.last / s(i - 1)
+          coefs(1, 1) * s.last + m.last - (2 to coefs.rows).map(i => coefs(i, 1) * s.last * m(i - 2) / s(i - 2)).sum
+        case (i, _) => coefs(i, 1) * s.last / s(i - 2)
       })
 
     new LinearRegression(ds, tcoefs)
