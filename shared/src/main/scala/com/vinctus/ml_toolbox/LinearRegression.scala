@@ -32,23 +32,25 @@ object LinearRegression {
       ds.transform((r, c) => /*if (c == ds.data.cols) ds.data(r, c)
           else*/ (ds.data(r, c) - m(c - 1)) / s(c - 1))
 
-//    println(standardized, m, s)
-
     val tds = standardized
-
     var coefs: Vector = Matrix.col(Seq.fill(ds.cols)(0D): _*)
 
     for (_ <- 1 to iterations)
       coefs -= optimize(tds, coefs, alpha, hypothesis)
 
-//    val coefs1 = coefs.drop(1).zipWithIndex map { case (c, i) => c * s(i) + m(i) }
+    val tcoefs =
+      coefs.build({
+        case (1, _) =>
+          coefs(1, 1) * s.last + m.last - (2 to coefs.rows).map(i => coefs(i, 1) * s.last * m(i - 1) / s(i - 1)).sum
+        case (i, _) => coefs(i, 1) * s.last / s(i - 1)
+      })
 
-    new LinearRegression(tds, coefs, m, s)
+    new LinearRegression(ds, tcoefs)
   }
 
 }
 
-class LinearRegression private (ts: Dataset, val coefficients: Vector, m: Seq[Double], s: Seq[Double]) {
+class LinearRegression private (ts: Dataset, val coefficients: Vector) {
 
   def retrain(learningRate: Double = .1,
               lambda: Double = .5,
@@ -60,8 +62,7 @@ class LinearRegression private (ts: Dataset, val coefficients: Vector, m: Seq[Do
 
   def cost(ds: Dataset): Double = { LinearRegression.cost(ds, coefficients) }
 
-  def predict(features: Seq[Double]): Double =
-    (Matrix(1D +: (features.zipWithIndex map { case (f, i) => (f - m(i)) / s(i) })) dot coefficients) * s.last + m.last
+  def predict(features: Vector): Double = LinearRegression.hypothesis(coefficients, features.prepend(ONE))
 
   override def toString: String = s"coefficients: [${coefficients mkString ", "}], cost: ${cost(ts)}"
 }

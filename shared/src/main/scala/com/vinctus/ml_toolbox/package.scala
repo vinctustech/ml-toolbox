@@ -8,6 +8,8 @@ package object ml_toolbox {
 
   type Hypothesis = (Vector, Vector) => Double
 
+  private[ml_toolbox] val ONE = Matrix(Seq(1D))
+
   def mean(xs: Seq[Double]): Double = xs.sum / xs.length
 
   def sd(xs: Seq[Double]): Double = {

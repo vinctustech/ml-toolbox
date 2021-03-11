@@ -1,5 +1,7 @@
 package com.vinctus.ml_toolbox
 
+import xyz.hyperreal.matrix.Matrix
+
 object Main extends App {
 
   val ds = Dataset(Seq("f", "t"), Seq(Seq(2, 4), Seq(3, 6)))
@@ -9,6 +11,6 @@ object Main extends App {
 
   println(ds)
   println(model)
-  println(model.predict(Seq(4)))
+  println(model.predict(Matrix(Seq(4))))
 
 }
