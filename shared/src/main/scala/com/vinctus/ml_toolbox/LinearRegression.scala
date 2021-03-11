@@ -23,7 +23,7 @@ object LinearRegression {
   def train(ds: Dataset,
             alpha: Double = .5,
             lambda: Double = .5,
-            iterations: Int = 100,
+            iterations: Int = 500,
             descend: GradientDescent = BatchGradientDescent): LinearRegression = {
     require(ds.cols >= 2, "require a dataset with at least two columns to train a model")
 
