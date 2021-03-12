@@ -2,6 +2,10 @@ package com.vinctus.ml_toolbox
 
 import scala.collection.mutable.ListBuffer
 
+object Plot {
+  val LIGHT_GRAY = 0xC0C0C0
+}
+
 class Plot(val xlower: Double,
            val xupper: Double,
            val ylower: Double,
@@ -12,32 +16,50 @@ class Plot(val xlower: Double,
            val fontSize: Int = 10) {
 
   var onChange: () => Unit = () => {}
+  var colorInt: Int = 0xc0c0c0
+
+  val width: Int = ((xupper - xlower) * scale).toInt
+  val height: Int = ((yupper - ylower) * scale).toInt
 
   private val points = new ListBuffer[Point]
   private val paths = new ListBuffer[Path]
 
+  def pointsIterator: Iterator[Point] = points.iterator
+
+  def pathsIterator: Iterator[Path] = paths.iterator
+
+  def transform(x: Double, y: Double): (Double, Double) = ((x - xlower) * scale, height - 1 - (y - ylower) * scale)
+
   def point(x: Double, y: Double): Unit = {
-    points += Point(x, y)
+    val (tx, ty) = transform(x, y)
+
+    points += Point(tx, ty, colorInt)
     onChange()
   }
 
-  def start: Path = {
+  def path: Path = {
     paths += new Path
     paths.last
   }
 
-  case class Point(x: Double, y: Double)
+  def color: Int = colorInt
+
+  def color_=(c: Int): Unit = colorInt = c
+
+  case class Point(x: Double, y: Double, c: Int)
 
   class Path {
-    private val points = new ListBuffer[Point]
+    private val points = new ListBuffer[(Double, Double)]
 
-    def add(x: Double, y: Double): Path = {
-      points += Point(x, y)
+    def point(x: Double, y: Double): Path = {
+      points += transform(x, y)
       onChange()
       this
     }
 
-    def iterator: Iterator[Point] = points.iterator
+    def first: (Double, Double) = points.head
+
+    def rest: Iterator[(Double, Double)] = points.iterator.drop(1)
   }
 
 }
