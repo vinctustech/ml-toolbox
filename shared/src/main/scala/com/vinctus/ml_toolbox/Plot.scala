@@ -51,6 +51,8 @@ class Plot(val xlower: Double,
   class Path {
     private val points = new ListBuffer[(Double, Double)]
 
+    val color: Int = colorInt
+
     def point(x: Double, y: Double): Path = {
       points += transform(x, y)
       onChange()

@@ -17,7 +17,7 @@ lazy val ml_toolbox = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(f
       Seq(
         "xyz.hyperreal" %%% "importer" % "0.1.0-snapshot.1",
         "xyz.hyperreal" %%% "table" % "1.0.0-snapshot.3",
-        "xyz.hyperreal" %%% "matrix" % "0.1.0-snapshot.4",
+        "xyz.hyperreal" %%% "matrix" % "0.1.0-snapshot.5",
         "xyz.hyperreal" %%% "csv" % "0.1.1",
       ),
       publishMavenStyle := true,

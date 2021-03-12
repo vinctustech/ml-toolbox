@@ -23,8 +23,9 @@ object LinearRegression {
   def train(ds: Dataset,
             alpha: Double = .5,
             lambda: Double = .5,
-            iterations: Int = 200,
-            descend: GradientDescent = BatchGradientDescent,
+            iterations: Int = 100000,
+            norm: Double = 1E-8,
+            optimize: Optimizer = GradientDescent,
             standardize: Boolean = true,
             standardizeTarget: Boolean = true): LinearRegression = {
     require(ds.cols >= 2, "require a dataset with at least two columns to train a model")
@@ -42,11 +43,7 @@ object LinearRegression {
       else
         ds
 
-    var coefs: Vector = Matrix.col(Seq.fill(ds.cols)(0D): _*)
-
-    for (_ <- 1 to iterations)
-      coefs -= descend(transformed, coefs, alpha, hypothesis)
-
+    val coefs = optimize(transformed, Matrix.col(Seq.fill(ds.cols)(0D): _*), alpha, hypothesis, iterations, norm)
     val tcoefs =
       if (standardize)
         if (standardizeTarget)
@@ -73,9 +70,12 @@ class LinearRegression private (ts: Dataset, val coefficients: Vector) {
 
   def retrain(learningRate: Double = .5,
               lambda: Double = .5,
-              iterations: Int = 100,
-              optimize: GradientDescent): LinearRegression =
-    train(ts, learningRate, lambda, iterations, optimize)
+              iterations: Int = 10000,
+              norm: Double = 1E-8,
+              optimize: Optimizer,
+              standardize: Boolean = true,
+              standardizeTarget: Boolean = true): LinearRegression =
+    train(ts, learningRate, lambda, iterations, norm, optimize, standardize, standardizeTarget)
 
   def summary(): Unit = {}
 

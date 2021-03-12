@@ -5,30 +5,31 @@ import scala.swing.Swing._
 import java.awt.geom.{Line2D, Path2D, Point2D}
 import java.awt.{BasicStroke, Color, RenderingHints}
 
-//object Main extends App {
-//
-//  val ds = RandomDataset.basic
-//  val model = LinearRegression train ds
-//
-//  println(model)
-//  println(model predict Seq(4, 5))
-//
-//}
+object Main extends App {
 
-object Main extends SimpleSwingApplication {
-  def top: Frame =
-    new MainFrame {
-      val plot = new Plot(-100, 100, -100, 100, 2, 20, 20)
+  val ds = RandomDataset.quadratic
+  val model = LinearRegression train ds
 
-      plot.point(0, 0)
+//  println(ds)
+  println(model)
+  println(model predict Seq(3, 9))
 
-      val p = plot.path
-
-      p.point(0, 0).point(20, 20)
-      contents = new PlotPanel(plot)
-      pack()
-    }
 }
+
+//object Main extends SimpleSwingApplication {
+//  def top: Frame =
+//    new MainFrame {
+//      val plot = new Plot(-100, 100, -100, 100, 2, 20, 20)
+//
+//      plot.point(0, 0)
+//
+//      val p = plot.path
+//
+//      p.point(0, 0).point(20, 20)
+//      contents = new PlotPanel(plot)
+//      pack()
+//    }
+//}
 
 class PlotPanel(plot: Plot) extends Panel {
 
@@ -54,7 +55,6 @@ class PlotPanel(plot: Plot) extends Panel {
         g.draw(new Line2D.Double(x, y, x, y))
     }
 
-    g.setColor(Color.CYAN)
     g.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
 
     plot.pathsIterator foreach { p =>
@@ -66,6 +66,7 @@ class PlotPanel(plot: Plot) extends Panel {
         case (x, y) => path.lineTo(x, y)
       }
 
+      g.setColor(new Color(p.color))
       g.draw(path)
     }
   }
