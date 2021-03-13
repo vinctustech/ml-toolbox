@@ -1,9 +1,10 @@
 package com.vinctus.ml_toolbox
 
+import java.awt.font.{FontRenderContext, GlyphVector}
 import scala.swing.{Frame, Graphics2D, MainFrame, Panel, SimpleSwingApplication}
 import scala.swing.Swing._
 import java.awt.geom.{Line2D, Path2D}
-import java.awt.{BasicStroke, Color, RenderingHints}
+import java.awt.{BasicStroke, Color, Font, RenderingHints}
 import scala.math._
 
 //object Main extends App {
@@ -20,12 +21,13 @@ import scala.math._
 object Main extends SimpleSwingApplication {
   def top: Frame =
     new MainFrame {
-      val plot = new Plot(0, 2 * Pi, -1, 1, 50, 2, 20, 20)
+      val plot = new Plot(0, 2 * Pi, -1, 1, 75, 20, 20)
 
       plot.color = Plot.ORANGE
       plot.trace(sin, 0, 2 * Pi)
       plot.color = Plot.CYAN
       plot.trace(x => sin(2 * x), 0, 2 * Pi)
+
       contents = new PlotPanel(plot)
       pack()
     }
@@ -33,10 +35,16 @@ object Main extends SimpleSwingApplication {
 
 class PlotPanel(plot: Plot) extends Panel {
 
+  private val FRC = new FontRenderContext(null, true, false)
+  private val STYLE_MAP =
+    Map[Plot.Style, Int](
+      Plot.PLAIN -> Font.PLAIN,
+      Plot.ITALIC -> Font.ITALIC
+    )
+
   background = Color.BLACK
   border = EtchedBorder
   preferredSize = (plot.width, plot.height)
-
   plot.onChange = () => repaint()
 
   override protected def paintComponent(g: Graphics2D): Unit = {
@@ -47,6 +55,7 @@ class PlotPanel(plot: Plot) extends Panel {
     g.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON))
     g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE)
 
+    // draw points
     g.setStroke(new BasicStroke(8, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
 
     plot.pointsIterator foreach {
@@ -55,8 +64,7 @@ class PlotPanel(plot: Plot) extends Panel {
         g.draw(new Line2D.Double(x, y, x, y))
     }
 
-    g.setStroke(new BasicStroke(plot.lines.toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
-
+    // draw paths
     plot.pathsIterator foreach { p =>
       val path = new Path2D.Double
       val (x, y) = p.start
@@ -68,7 +76,25 @@ class PlotPanel(plot: Plot) extends Panel {
       }
 
       g.setColor(new Color(p.color))
+      g.setStroke(new BasicStroke(plot.lines.toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
       g.draw(path)
+    }
+
+    // draw text
+    plot.textsIterator foreach {
+      case plot.Text(s, x, y, color, style, pos) =>
+        val gv = new Font(Font.SERIF, STYLE_MAP(style), plot.fontSize).createGlyphVector(FRC, s)
+        val vb = gv.getVisualBounds
+        val (xp, yp) =
+          pos match {
+            case Plot.ABOVE => (x - vb.getCenterX, y)
+            case Plot.BELOW => (x - vb.getCenterX, y + vb.getHeight)
+            case Plot.RIGHT => (x - vb.getX, y - vb.getCenterY)
+            case Plot.LEFT  => (x - vb.getWidth - vb.getX, y - vb.getCenterY)
+          }
+
+        g.setColor(new Color(color))
+        g.drawGlyphVector(gv, xp.toFloat, yp.toFloat)
     }
   }
 
