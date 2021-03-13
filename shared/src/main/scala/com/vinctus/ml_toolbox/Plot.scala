@@ -6,11 +6,12 @@ object Plot {
   val LIGHT_GRAY = 0xC0C0C0
 }
 
-class Plot(val xlower: Double,
-           val xupper: Double,
-           val ylower: Double,
-           val yupper: Double,
+class Plot(xlower: Double,
+           xupper: Double,
+           ylower: Double,
+           yupper: Double,
            val scale: Double = 1,
+           val lines: Int = 2,
            val xlabeling: Double = 1,
            val ylabeling: Double = 1,
            val fontSize: Int = 10) {
@@ -18,8 +19,13 @@ class Plot(val xlower: Double,
   var onChange: () => Unit = () => {}
   var colorInt: Int = 0xc0c0c0
 
-  val width: Int = ((xupper - xlower) * scale).toInt
-  val height: Int = ((yupper - ylower) * scale).toInt
+  private val xlower1: Double = xlower - 2 * lines / scale
+  private val xupper1: Double = xupper + 2 * lines / scale
+  private val ylower1: Double = ylower - 2 * lines / scale
+  private val yupper1: Double = yupper + 2 * lines / scale
+
+  val width: Int = ((xupper1 - xlower1) * scale).toInt
+  val height: Int = ((yupper1 - ylower1) * scale).toInt
 
   private val points = new ListBuffer[Point]
   private val paths = new ListBuffer[Path]
@@ -28,7 +34,7 @@ class Plot(val xlower: Double,
 
   def pathsIterator: Iterator[Path] = paths.iterator
 
-  def transform(x: Double, y: Double): (Double, Double) = ((x - xlower) * scale, height - 1 - (y - ylower) * scale)
+  def transform(x: Double, y: Double): (Double, Double) = ((x - xlower1) * scale, height - 1 - (y - ylower1) * scale)
 
   def point(x: Double, y: Double): Unit = {
     val (tx, ty) = transform(x, y)
@@ -40,6 +46,27 @@ class Plot(val xlower: Double,
   def path: Path = {
     paths += new Path
     paths.last
+  }
+
+  def trace(f: Double => Double, lower: Double, upper: Double): Unit = {
+    val p = path
+
+    var xcur: Double = 0
+    var ycur: Double = 0
+
+    def plot(x: Double): Unit = {
+      xcur = x
+      ycur = f(x)
+      p.point(xcur, ycur)
+    }
+
+    plot(lower)
+
+    while (xcur < upper) {
+      val next = xcur + 4 / scale
+
+      plot(if (next > upper) upper else next)
+    }
   }
 
   def color: Int = colorInt
@@ -59,7 +86,7 @@ class Plot(val xlower: Double,
       this
     }
 
-    def first: (Double, Double) = points.head
+    def start: (Double, Double) = points.head
 
     def rest: Iterator[(Double, Double)] = points.iterator.drop(1)
   }

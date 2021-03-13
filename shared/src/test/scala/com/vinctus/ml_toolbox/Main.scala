@@ -1,35 +1,32 @@
 package com.vinctus.ml_toolbox
 
-import scala.swing.{Frame, Graphics2D, Label, MainFrame, Panel, Point, SimpleSwingApplication}
+import scala.swing.{Frame, Graphics2D, MainFrame, Panel, SimpleSwingApplication}
 import scala.swing.Swing._
-import java.awt.geom.{Line2D, Path2D, Point2D}
+import java.awt.geom.{Line2D, Path2D}
 import java.awt.{BasicStroke, Color, RenderingHints}
+import scala.math._
 
-object Main extends App {
-
-  val ds = RandomDataset.quadratic
-  val model = LinearRegression train ds
-
-//  println(ds)
-  println(model)
-  println(model predict Seq(3, 9))
-
-}
-
-//object Main extends SimpleSwingApplication {
-//  def top: Frame =
-//    new MainFrame {
-//      val plot = new Plot(-100, 100, -100, 100, 2, 20, 20)
+//object Main extends App {
 //
-//      plot.point(0, 0)
+//  val ds = RandomDataset.quadratic
+//  val model = LinearRegression train ds
 //
-//      val p = plot.path
+////  println(ds)
+//  println(model)
+//  println(model predict Seq(3, 9))
 //
-//      p.point(0, 0).point(20, 20)
-//      contents = new PlotPanel(plot)
-//      pack()
-//    }
 //}
+
+object Main extends SimpleSwingApplication {
+  def top: Frame =
+    new MainFrame {
+      val plot = new Plot(0, 2 * Pi, -1, 1, 50, 2, 20, 20)
+
+      plot.trace(sin, 0, 2 * Pi)
+      contents = new PlotPanel(plot)
+      pack()
+    }
+}
 
 class PlotPanel(plot: Plot) extends Panel {
 
@@ -55,13 +52,14 @@ class PlotPanel(plot: Plot) extends Panel {
         g.draw(new Line2D.Double(x, y, x, y))
     }
 
-    g.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
+    g.setStroke(new BasicStroke(plot.lines, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
 
     plot.pathsIterator foreach { p =>
       val path = new Path2D.Double
-      val (x, y) = p.first
+      val (x, y) = p.start
 
       path.moveTo(x, y)
+
       p.rest foreach {
         case (x, y) => path.lineTo(x, y)
       }
