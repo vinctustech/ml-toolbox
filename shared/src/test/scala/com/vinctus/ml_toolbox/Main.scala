@@ -1,6 +1,8 @@
 package com.vinctus.ml_toolbox
 
-import java.awt.font.{FontRenderContext, GlyphVector}
+import xyz.hyperreal.matrix.Matrix
+
+import java.awt.font.FontRenderContext
 import scala.swing.{Frame, Graphics2D, MainFrame, Panel, SimpleSwingApplication}
 import scala.swing.Swing._
 import java.awt.geom.{Line2D, Path2D}
@@ -21,12 +23,20 @@ import scala.math._
 object Main extends SimpleSwingApplication {
   def top: Frame =
     new MainFrame {
-      val plot = new Plot(0, 2 * Pi, -1, 1, 75, .5, .5)
+      private val ds = RandomDataset.quadratic
+      private val model = LinearRegression train ds
 
-      plot.color = Plot.ORANGE
-      plot.trace(sin, 0, 2 * Pi)
+      //  println(ds)
+      println(model)
+//      println(model predict Seq(3, 9))
+
+      private val x2 = ds.col("x2")
+      private val y = ds.col("y")
+      println(y.min, y.max)
+      private val plot = new Plot(x2.min, x2.max, y.min, y.max, .05, 2000, 2000)
+
       plot.color = Plot.CYAN
-      plot.trace(x => sin(2 * x), 0, 2 * Pi)
+      plot.trace(x => model.predict(Seq(x, x * x)), 0, 50)
 
       contents = new PlotPanel(plot)
       pack()

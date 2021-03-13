@@ -27,7 +27,7 @@ object RandomDataset {
     val c1 = 5.4
     val c2 = 7.2
     val points =
-      for (_ <- 1 to 100)
+      for (_ <- 1 to 20)
         yield {
           val x1 = Random.nextDouble() * 50
           val x2 = x1 * x1

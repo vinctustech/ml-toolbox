@@ -9,12 +9,14 @@ import scala.collection.immutable.ArraySeq
 class Dataset private (columns: ArraySeq[String], columnMap: Map[String, Int], val data: Matrix[Double])
     extends (Int => Dataset) {
   def this(columns: collection.Seq[String], data: Matrix[Double]) =
-    this(columns to ArraySeq, columns.zipWithIndex toMap, data)
+    this(columns to ArraySeq, columns zip (1 to data.cols) toMap, data)
 
   require(columns.nonEmpty, "require at least one column")
   require(data.cols == columns.length, "require number of data columns equal number of column names")
 
   def apply(ridx: Int): Dataset = new Dataset(columns, columnMap, data.row(ridx))
+
+  def col(name: String): Matrix[Double] = data.col(columnMap(name))
 
   def rows: Int = data.rows
 
