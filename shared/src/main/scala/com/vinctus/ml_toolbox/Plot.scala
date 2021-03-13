@@ -4,6 +4,11 @@ import scala.collection.mutable.ListBuffer
 
 object Plot {
   val LIGHT_GRAY = 0xC0C0C0
+  val RED = 0xFF0000
+  val ORANGE = 0xFFA500
+  val GREEN = 0x00FF00
+  val BLUE = 0x0000FF
+  val CYAN = 0x00FFFF
 }
 
 class Plot(xlower: Double,
@@ -11,7 +16,7 @@ class Plot(xlower: Double,
            ylower: Double,
            yupper: Double,
            val scale: Double = 1,
-           val lines: Int = 2,
+           val lines: Double = 2,
            val xlabeling: Double = 1,
            val ylabeling: Double = 1,
            val fontSize: Int = 10) {

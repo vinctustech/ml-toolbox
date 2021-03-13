@@ -22,7 +22,10 @@ object Main extends SimpleSwingApplication {
     new MainFrame {
       val plot = new Plot(0, 2 * Pi, -1, 1, 50, 2, 20, 20)
 
+      plot.color = Plot.ORANGE
       plot.trace(sin, 0, 2 * Pi)
+      plot.color = Plot.CYAN
+      plot.trace(x => sin(2 * x), 0, 2 * Pi)
       contents = new PlotPanel(plot)
       pack()
     }
@@ -52,7 +55,7 @@ class PlotPanel(plot: Plot) extends Panel {
         g.draw(new Line2D.Double(x, y, x, y))
     }
 
-    g.setStroke(new BasicStroke(plot.lines, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
+    g.setStroke(new BasicStroke(plot.lines.toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
 
     plot.pathsIterator foreach { p =>
       val path = new Path2D.Double
