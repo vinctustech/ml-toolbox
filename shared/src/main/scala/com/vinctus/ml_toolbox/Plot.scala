@@ -81,7 +81,7 @@ class Plot(xlower: Double,
     text(label(y), xlower - px(10), y.toDouble, Plot.PLAIN, Plot.LEFT)
   }
 
-  lines = .2
+  lines = .1
 
   for (x <- xstart to xend by xlabels)
     line(x.toDouble, ylower, x.toDouble, yupper)
