@@ -21,7 +21,7 @@ import scala.math._
 object Main extends SimpleSwingApplication {
   def top: Frame =
     new MainFrame {
-      val plot = new Plot(0, 2 * Pi, -1, 1, 75, 20, 20)
+      val plot = new Plot(0, 2 * Pi, -1, 1, 75, .5, .5)
 
       plot.color = Plot.ORANGE
       plot.trace(sin, 0, 2 * Pi)
@@ -56,7 +56,7 @@ class PlotPanel(plot: Plot) extends Panel {
     g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE)
 
     // draw points
-    g.setStroke(new BasicStroke(8, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
+    g.setStroke(new BasicStroke(plot.pointSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
 
     plot.pointsIterator foreach {
       case plot.Point(x, y, c) =>
@@ -76,7 +76,7 @@ class PlotPanel(plot: Plot) extends Panel {
       }
 
       g.setColor(new Color(p.color))
-      g.setStroke(new BasicStroke(plot.lines.toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
+      g.setStroke(new BasicStroke(p.width.toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
       g.draw(path)
     }
 

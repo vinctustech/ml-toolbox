@@ -2,8 +2,8 @@ package com.vinctus.ml_toolbox
 
 import com.vinctus.ml_toolbox.Plot.{LIGHT_GRAY, Position, Style}
 
-import java.awt.Font
 import scala.collection.mutable.ListBuffer
+import scala.math.BigDecimal.double2bigDecimal
 
 object Plot {
   val LIGHT_GRAY = 0xC0C0C0
@@ -29,20 +29,25 @@ class Plot(xlower: Double,
            xupper: Double,
            ylower: Double,
            yupper: Double,
-           val scale: Double = 1,
-           val xlabeling: Double = 1,
-           val ylabeling: Double = 1,
+           scale: Double = 1,
+           xlabels: Double = 1,
+           ylabels: Double = 1,
+           val grid: Boolean = true,
+           val pointSize: Int = 8,
            val fontSize: Int = 12) {
+
+  val DEFAULT_LINE_WIDTH = 2
 
   var onChange: () => Unit = () => {}
   var colorInt: Int = LIGHT_GRAY
-  var lineWidth: Double = 2
+  var lineWidth: Double = DEFAULT_LINE_WIDTH
 
-  private val lineMargin = 5 / scale
-  private val xlower1: Double = xlower - lineMargin - 20 / scale
+  private val lineMargin = px(5)
+
+  private val xlower1: Double = xlower - lineMargin - px(30)
   private val xupper1: Double = xupper + lineMargin
-  private val ylower1: Double = ylower - lineMargin - 20 / scale
-  private val yupper1: Double = yupper + lineMargin
+  private val ylower1: Double = ylower - lineMargin - px(20)
+  private val yupper1: Double = yupper + lineMargin + px(5) //top most label
 
   val width: Int = ((xupper1 - xlower1) * scale).toInt
   val height: Int = ((yupper1 - ylower1) * scale).toInt
@@ -50,6 +55,41 @@ class Plot(xlower: Double,
   private val points = new ListBuffer[Point]
   private val paths = new ListBuffer[Path]
   private val texts = new ListBuffer[Text]
+
+  private val xstart = xlower.ceil
+  private val xend = xupper.floor
+  private val ystart = ylower.ceil
+  private val yend = yupper.floor
+
+  private def label(v: BigDecimal) =
+    if (v.isWhole) v.toBigInt.toString
+    else v.toString
+
+  private def px(p: Double) = p / scale
+
+  line(xstart, ylower - px(4), xupper, ylower - px(4))
+
+  for (x <- xstart to xend by xlabels) {
+    line(x.toDouble, ylower - px(4), x.toDouble, ylower - px(6))
+    text(label(x), x.toDouble, ylower - px(10), Plot.PLAIN, Plot.BELOW)
+  }
+
+  line(xlower - px(4), ystart, xlower - px(4), yupper)
+
+  for (y <- ystart to yend by ylabels) {
+    line(xlower - px(4), y.toDouble, xlower - px(6), y.toDouble)
+    text(label(y), xlower - px(10), y.toDouble, Plot.PLAIN, Plot.LEFT)
+  }
+
+  lines = .2
+
+  for (x <- xstart to xend by xlabels)
+    line(x.toDouble, ylower, x.toDouble, yupper)
+
+  for (y <- ystart to yend by ylabels)
+    line(xlower, y.toDouble, xupper, y.toDouble)
+
+  lines = DEFAULT_LINE_WIDTH
 
   def pointsIterator: Iterator[Point] = points.iterator
 
@@ -78,6 +118,8 @@ class Plot(xlower: Double,
     paths.last
   }
 
+  def line(x1: Double, y1: Double, x2: Double, y2: Double): Path = path.point(x1, y1).point(x2, y2)
+
   def trace(f: Double => Double, lower: Double, upper: Double): Unit = {
     val p = path
 
@@ -93,7 +135,7 @@ class Plot(xlower: Double,
     plot(lower)
 
     while (xcur < upper) {
-      val next = xcur + 4 / scale
+      val next = xcur + px(4)
 
       plot(if (next > upper) upper else next)
     }
