@@ -29,9 +29,9 @@ class Plot(xlower: Double,
            xupper: Double,
            ylower: Double,
            yupper: Double,
+           val width: Int,
+           val height: Int,
            textDimensions: (String, Style, Int) => (Double, Double),
-           xscale: Double = 1,
-           yscale: Double = 1,
            xlabels: Double = 1,
            ylabels: Double = 1,
            val grid: Boolean = true,
@@ -44,8 +44,7 @@ class Plot(xlower: Double,
   var colorInt: Int = LIGHT_GRAY
   var lineWidth: Double = DEFAULT_LINE_WIDTH
 
-  private val xLineMargin = px(4)
-  private val yLineMargin = py(4)
+  private val lineMargin = 4
 
   private val xstart = xlower.ceil
   private val xend = xupper.floor
@@ -55,13 +54,19 @@ class Plot(xlower: Double,
   private val points = new ListBuffer[Point]
   private val paths = new ListBuffer[Path]
   private val texts = new ListBuffer[Text]
-  private val xlower1: Double = xlower - 3.5 * xLineMargin - px(textDimensions(label(yend), Plot.PLAIN, fontSize)._1)
-  private val xupper1: Double = xupper + xLineMargin + px(textDimensions(label(xend), Plot.PLAIN, fontSize)._1 / 2)
-  private val ylower1: Double = ylower - 3 * yLineMargin - py(textDimensions("0", Plot.PLAIN, fontSize)._2)
-  private val yupper1: Double = yupper + yLineMargin + py(textDimensions("0", Plot.PLAIN, fontSize)._2 / 2)
 
-  val width: Int = ((xupper1 - xlower1) * xscale).toInt
-  val height: Int = ((yupper1 - ylower1) * yscale).toInt
+  private val left: Double = 3.5 * lineMargin + textDimensions(label(yend), Plot.PLAIN, fontSize)._1
+  private val right: Double = lineMargin + textDimensions(label(xend), Plot.PLAIN, fontSize)._1 / 2
+  private val up: Double = lineMargin + textDimensions("0", Plot.PLAIN, fontSize)._2 / 2
+  private val down: Double = 3.5 * lineMargin + textDimensions("0", Plot.PLAIN, fontSize)._2
+
+  private val xscale: Double = (width - left - right) / (xupper - xlower)
+  private val yscale: Double = (height - up - down) / (yupper - ylower)
+
+  private val xlower1: Double = xlower - px(left)
+  private val xupper1: Double = xupper + px(right)
+  private val ylower1: Double = ylower - py(down)
+  private val yupper1: Double = yupper + py(up)
 
   private def label(v: BigDecimal) =
     if (v.isWhole) v.toBigInt.toString
