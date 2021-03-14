@@ -29,6 +29,7 @@ class Plot(xlower: Double,
            xupper: Double,
            ylower: Double,
            yupper: Double,
+           textDimensions: (String, Style, Int) => (Double, Double),
            xscale: Double = 1,
            yscale: Double = 1,
            xlabels: Double = 1,
@@ -43,7 +44,8 @@ class Plot(xlower: Double,
   var colorInt: Int = LIGHT_GRAY
   var lineWidth: Double = DEFAULT_LINE_WIDTH
 
-  private val lineMargin = px(5)
+  private val xLineMargin = px(4)
+  private val yLineMargin = py(4)
 
   private val xstart = xlower.ceil
   private val xend = xupper.floor
@@ -53,10 +55,10 @@ class Plot(xlower: Double,
   private val points = new ListBuffer[Point]
   private val paths = new ListBuffer[Path]
   private val texts = new ListBuffer[Text]
-  private val xlower1: Double = xlower - lineMargin - px(30)
-  private val xupper1: Double = xupper + lineMargin + px(10)
-  private val ylower1: Double = ylower - lineMargin - py(20)
-  private val yupper1: Double = yupper + lineMargin + py(10) //top most label
+  private val xlower1: Double = xlower - 3.5 * xLineMargin - px(textDimensions(label(yend), Plot.PLAIN, fontSize)._1)
+  private val xupper1: Double = xupper + xLineMargin + px(textDimensions(label(xend), Plot.PLAIN, fontSize)._1 / 2)
+  private val ylower1: Double = ylower - 3 * yLineMargin - py(textDimensions("0", Plot.PLAIN, fontSize)._2)
+  private val yupper1: Double = yupper + yLineMargin + py(textDimensions("0", Plot.PLAIN, fontSize)._2 / 2)
 
   val width: Int = ((xupper1 - xlower1) * xscale).toInt
   val height: Int = ((yupper1 - ylower1) * yscale).toInt

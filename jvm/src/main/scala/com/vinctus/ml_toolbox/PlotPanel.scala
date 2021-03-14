@@ -1,13 +1,16 @@
 package com.vinctus.ml_toolbox
 
+import com.vinctus.ml_toolbox.Plot.Style
+import com.vinctus.ml_toolbox.PlotPanel.glyphVector
+
 import java.awt.{BasicStroke, Color, Font, RenderingHints}
-import java.awt.font.FontRenderContext
-import java.awt.geom.{Line2D, Path2D}
+import java.awt.font.{FontRenderContext, GlyphVector}
+import java.awt.geom.{Line2D, Path2D, Rectangle2D}
 import scala.swing.{Graphics2D, Panel}
 import scala.swing.Swing.EtchedBorder
 import scala.swing.Swing._
 
-class PlotPanel(plot: Plot) extends Panel {
+object PlotPanel {
 
   private val FRC = new FontRenderContext(null, true, false)
   private val STYLE_MAP =
@@ -15,6 +18,22 @@ class PlotPanel(plot: Plot) extends Panel {
       Plot.PLAIN -> Font.PLAIN,
       Plot.ITALIC -> Font.ITALIC
     )
+
+  def glyphVector(text: String, style: Style, fontSize: Int): (GlyphVector, Rectangle2D) = {
+    val gv = new Font(Font.SERIF, PlotPanel.STYLE_MAP(style), fontSize).createGlyphVector(PlotPanel.FRC, text)
+
+    (gv, gv.getVisualBounds)
+  }
+
+  def textDimensions(text: String, style: Style, fontSize: Int): (Double, Double) = {
+    val (_, vb) = glyphVector(text, style, fontSize)
+
+    (vb.getWidth, vb.getHeight)
+  }
+
+}
+
+class PlotPanel(plot: Plot) extends Panel {
 
   background = Color.BLACK
   border = EtchedBorder
@@ -57,8 +76,7 @@ class PlotPanel(plot: Plot) extends Panel {
     // draw text
     plot.textsIterator foreach {
       case plot.Text(s, x, y, color, style, pos) =>
-        val gv = new Font(Font.SERIF, STYLE_MAP(style), plot.fontSize).createGlyphVector(FRC, s)
-        val vb = gv.getVisualBounds
+        val (gv, vb) = glyphVector(s, style, plot.fontSize)
         val (xp, yp) =
           pos match {
             case Plot.ABOVE => (x - vb.getCenterX, y)
