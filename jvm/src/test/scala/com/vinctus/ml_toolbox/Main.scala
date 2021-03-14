@@ -45,7 +45,7 @@ object Main extends SimpleSwingApplication {
       //  println(ds)
       println(model)
 
-      private val plot = new Plot(0, 20, 50, 130, 400, 300, PlotPanel.textDimensions, 5, 5)
+      private val plot = new Plot(0, 20, 50, 130, 700, 500, PlotPanel.textDimensions, 5, 5)
 
       plot.color = Plot.CYAN
 
