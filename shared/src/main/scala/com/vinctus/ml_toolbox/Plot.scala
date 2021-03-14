@@ -45,6 +45,14 @@ class Plot(xlower: Double,
 
   private val lineMargin = px(5)
 
+  private val xstart = xlower.ceil
+  private val xend = xupper.floor
+  private val ystart = ylower.ceil
+  private val yend = yupper.floor
+
+  private val points = new ListBuffer[Point]
+  private val paths = new ListBuffer[Path]
+  private val texts = new ListBuffer[Text]
   private val xlower1: Double = xlower - lineMargin - px(30)
   private val xupper1: Double = xupper + lineMargin + px(10)
   private val ylower1: Double = ylower - lineMargin - py(20)
@@ -52,15 +60,6 @@ class Plot(xlower: Double,
 
   val width: Int = ((xupper1 - xlower1) * xscale).toInt
   val height: Int = ((yupper1 - ylower1) * yscale).toInt
-
-  private val points = new ListBuffer[Point]
-  private val paths = new ListBuffer[Path]
-  private val texts = new ListBuffer[Text]
-
-  private val xstart = xlower.ceil
-  private val xend = xupper.floor
-  private val ystart = ylower.ceil
-  private val yend = yupper.floor
 
   private def label(v: BigDecimal) =
     if (v.isWhole) v.toBigInt.toString
