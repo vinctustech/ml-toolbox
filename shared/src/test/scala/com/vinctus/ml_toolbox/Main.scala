@@ -20,23 +20,51 @@ import scala.math._
 //
 //}
 
+//object Main extends SimpleSwingApplication {
+//  def top: Frame =
+//    new MainFrame {
+//      private val ds = RandomDataset.quadratic
+//      private val model = LinearRegression train ds
+//
+//      //  println(ds)
+//      println(model)
+////      println(model predict Seq(3, 9))
+//
+//      private val x2 = ds.col("x2")
+//      private val y = ds.col("y")
+//      println(y.min, y.max)
+//      private val plot = new Plot(x2.min, x2.max, y.min, y.max, .8, .02, 2000, 2000)
+//
+//      plot.color = Plot.CYAN
+//      plot.trace(x => model.predict(Seq(x, x * x)), 0, 50)
+//
+//      contents = new PlotPanel(plot)
+//      pack()
+//    }
+//}
+
 object Main extends SimpleSwingApplication {
   def top: Frame =
     new MainFrame {
-      private val ds = RandomDataset.quadratic
+      private val ds = RandomDataset.one
       private val model = LinearRegression train ds
 
       //  println(ds)
       println(model)
-//      println(model predict Seq(3, 9))
+      //      println(model predict Seq(3, 9))
 
-      private val x2 = ds.col("x2")
+      private val x1 = ds.col("x1")
       private val y = ds.col("y")
-      println(y.min, y.max)
-      private val plot = new Plot(x2.min, x2.max, y.min, y.max, .05, 2000, 2000)
+      private val plot = new Plot(0, 20, 50, 130, 30, 5, 5, 10)
 
       plot.color = Plot.CYAN
-      plot.trace(x => model.predict(Seq(x, x * x)), 0, 50)
+
+      ds.rowIterator foreach {
+        case Seq(x1, y) => plot.point(x1, y)
+      }
+
+      plot.color = Plot.ORANGE
+      plot.trace(x => model.predict(Seq(x)), 0, 20)
 
       contents = new PlotPanel(plot)
       pack()

@@ -11,7 +11,7 @@ object LinearRegression {
     var cost = 0D
 
     for (i <- 1 to ds.rows) {
-      val (features, target) = ds row i
+      val (features, target) = ds datum i
       val error = hypothesis(coefs, features) - target
 
       cost += error * error

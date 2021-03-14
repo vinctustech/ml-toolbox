@@ -29,7 +29,8 @@ class Plot(xlower: Double,
            xupper: Double,
            ylower: Double,
            yupper: Double,
-           scale: Double = 1,
+           xscale: Double = 1,
+           yscale: Double = 1,
            xlabels: Double = 1,
            ylabels: Double = 1,
            val grid: Boolean = true,
@@ -45,12 +46,12 @@ class Plot(xlower: Double,
   private val lineMargin = px(5)
 
   private val xlower1: Double = xlower - lineMargin - px(30)
-  private val xupper1: Double = xupper + lineMargin
-  private val ylower1: Double = ylower - lineMargin - px(20)
-  private val yupper1: Double = yupper + lineMargin + px(5) //top most label
+  private val xupper1: Double = xupper + lineMargin + px(10)
+  private val ylower1: Double = ylower - lineMargin - py(20)
+  private val yupper1: Double = yupper + lineMargin + py(10) //top most label
 
-  val width: Int = ((xupper1 - xlower1) * scale).toInt
-  val height: Int = ((yupper1 - ylower1) * scale).toInt
+  val width: Int = ((xupper1 - xlower1) * xscale).toInt
+  val height: Int = ((yupper1 - ylower1) * yscale).toInt
 
   private val points = new ListBuffer[Point]
   private val paths = new ListBuffer[Path]
@@ -65,13 +66,15 @@ class Plot(xlower: Double,
     if (v.isWhole) v.toBigInt.toString
     else v.toString
 
-  private def px(p: Double) = p / scale
+  private def px(p: Double) = p / xscale
 
-  line(xstart, ylower - px(4), xupper, ylower - px(4))
+  private def py(p: Double) = p / yscale
+
+  line(xstart, ylower - py(4), xupper, ylower - py(4))
 
   for (x <- xstart to xend by xlabels) {
-    line(x.toDouble, ylower - px(4), x.toDouble, ylower - px(6))
-    text(label(x), x.toDouble, ylower - px(10), Plot.PLAIN, Plot.BELOW)
+    line(x.toDouble, ylower - py(4), x.toDouble, ylower - py(6))
+    text(label(x), x.toDouble, ylower - py(10), Plot.PLAIN, Plot.BELOW)
   }
 
   line(xlower - px(4), ystart, xlower - px(4), yupper)
@@ -97,7 +100,7 @@ class Plot(xlower: Double,
 
   def textsIterator: Iterator[Text] = texts.iterator
 
-  def transform(x: Double, y: Double): (Double, Double) = ((x - xlower1) * scale, height - 1 - (y - ylower1) * scale)
+  def transform(x: Double, y: Double): (Double, Double) = ((x - xlower1) * xscale, height - 1 - (y - ylower1) * yscale)
 
   def point(x: Double, y: Double): Unit = {
     val (tx, ty) = transform(x, y)

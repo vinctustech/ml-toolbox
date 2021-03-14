@@ -22,7 +22,9 @@ class Dataset private (columns: ArraySeq[String], columnMap: Map[String, Int], v
 
   def cols: Int = data.cols
 
-  def row(ridx: Int): (Vector, Double) = (data row ridx removeCol data.cols prepend ONE, data.row(ridx).last)
+  def rowIterator: Iterator[Matrix[Double]] = (1 to rows).iterator map data.row
+
+  def datum(ridx: Int): (Vector, Double) = (data row ridx removeCol data.cols prepend ONE, data.row(ridx).last)
 
   def transform(elem: (Int, Int) => Double) = new Dataset(columns, columnMap, data.build(elem))
 

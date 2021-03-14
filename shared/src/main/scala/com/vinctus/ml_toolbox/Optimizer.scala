@@ -18,7 +18,7 @@ object GradientDescent extends Optimizer {
         var theta: Double = 0
 
         for (i <- 1 to ds.rows) {
-          val (features, target) = ds.row(i)
+          val (features, target) = ds.datum(i)
 
           theta += (h(params, features) - target) * (features col j)
         }

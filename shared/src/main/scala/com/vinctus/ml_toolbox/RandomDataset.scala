@@ -4,6 +4,22 @@ import scala.util.Random
 
 object RandomDataset {
 
+  def one: Dataset = {
+    val c0 = 51.7
+    val c1 = 3.4
+    val points =
+      for (_ <- 1 to 30)
+        yield {
+          val x1 = Random.nextDouble() * 20
+          val offset = Random.nextDouble() * 14 - 7
+          val y = (c0 + c1 * x1) + offset
+
+          Seq(x1, y)
+        }
+
+    Dataset(Seq("x1", "y"), points)
+  }
+
   def two: Dataset = {
     val c0 = 3.7
     val c1 = 5.4
