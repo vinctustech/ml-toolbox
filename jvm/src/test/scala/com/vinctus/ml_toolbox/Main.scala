@@ -43,33 +43,29 @@ import scala.math._
 //    }
 //}
 
-object Main extends App {
-  app.main(args)
+object Main extends SimpleSwingApplication {
+  def top: Frame =
+    new MainFrame {
+      private val ds = RandomDataset.one
+      private val model = LinearRegression train ds
 
-  object app extends SimpleSwingApplication {
-    def top: Frame =
-      new MainFrame {
-        private val ds = RandomDataset.one
-        private val model = LinearRegression train ds
+      //  println(ds)
+      println(model)
 
-        //  println(ds)
-        println(model)
+      private val plot = new Plot(0, 20, 50, 130, 30, 5, 5, 10)
 
-        private val plot = new Plot(0, 20, 50, 130, 30, 5, 5, 10)
+      plot.color = Plot.CYAN
 
-        plot.color = Plot.CYAN
-
-        ds.rowIterator foreach {
-          case Seq(x1, y) => plot.point(x1, y)
-        }
-
-        plot.color = Plot.ORANGE
-        plot.trace(x => model.predict(Seq(x)), 0, 20)
-
-        contents = new PlotPanel(plot)
-        pack()
+      ds.rowIterator foreach {
+        case Seq(x1, y) => plot.point(x1, y)
       }
-  }
+
+      plot.color = Plot.ORANGE
+      plot.trace(x => model.predict(Seq(x)), 0, 20)
+
+      contents = new PlotPanel(plot)
+      pack()
+    }
 }
 
 class PlotPanel(plot: Plot) extends Panel {
