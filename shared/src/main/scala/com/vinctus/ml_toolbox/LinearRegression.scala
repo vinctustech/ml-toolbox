@@ -24,7 +24,7 @@ object LinearRegression {
             alpha: Double = .5,
             lambda: Double = .5,
             iterations: Int = 100000,
-            norm: Double = 1E-8,
+            norm: Double = 1E-9,
             optimize: Optimizer = GradientDescent,
             standardize: Boolean = true,
             standardizeTarget: Boolean = true): LinearRegression = {
@@ -70,8 +70,8 @@ class LinearRegression private (ts: Dataset, val coefficients: Vector) {
 
   def retrain(learningRate: Double = .5,
               lambda: Double = .5,
-              iterations: Int = 10000,
-              norm: Double = 1E-8,
+              iterations: Int = 100000,
+              norm: Double = 1E-9,
               optimize: Optimizer,
               standardize: Boolean = true,
               standardizeTarget: Boolean = true): LinearRegression =

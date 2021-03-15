@@ -1,6 +1,7 @@
 package com.vinctus.ml_toolbox
 
 import scala.swing.{Frame, MainFrame, SimpleSwingApplication}
+import scala.util.Random
 
 //object Main extends App {
 //
@@ -39,13 +40,14 @@ import scala.swing.{Frame, MainFrame, SimpleSwingApplication}
 object Main extends SimpleSwingApplication {
   def top: Frame =
     new MainFrame {
+      Random.setSeed(0L)
       private val ds = RandomDataset.one
       private val model = LinearRegression train ds
 
       //  println(ds)
       println(model)
 
-      private val plot = new Plot(0, 20, 50, 130, 700, 500, PlotPanel.textDimensions, 5, 5)
+      private val plot = new Plot(0, 20, 50, 130, 700, 500, PlotPanel.textDimensions, 1, 5)
 
       plot.color = Plot.CYAN
 

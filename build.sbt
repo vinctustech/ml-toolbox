@@ -11,6 +11,7 @@ lazy val ml_toolbox = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(f
       ),
     organization := "com.vinctus",
     mainClass := Some("com.vinctus.ml_toolbox.Main"),
+    Test / mainClass := Some("com.vinctus.ml_toolbox.Main"),
     libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.5" % "test",
     libraryDependencies += "xyz.hyperreal" %%% "cross-platform" % "0.1.0-snapshot.3",
     libraryDependencies ++=
@@ -32,10 +33,11 @@ lazy val ml_toolbox = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(f
     nativeLinkStubs := true
   ).
   jsSettings(
+    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "1.1.0",
     jsEnv := new org.scalajs.jsenv.nodejs.NodeJSEnv(),
-//    Test / scalaJSUseMainModuleInitializer := true,
-//    Test / scalaJSUseTestModuleInitializer := false,
-    Test / scalaJSUseMainModuleInitializer := false,
-    Test / scalaJSUseTestModuleInitializer := true,
+    Test / scalaJSUseMainModuleInitializer := true,
+    Test / scalaJSUseTestModuleInitializer := false,
+//    Test / scalaJSUseMainModuleInitializer := false,
+//    Test / scalaJSUseTestModuleInitializer := true,
     scalaJSUseMainModuleInitializer := true,
   )
