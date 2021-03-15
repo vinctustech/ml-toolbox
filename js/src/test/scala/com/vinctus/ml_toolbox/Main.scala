@@ -1,7 +1,7 @@
 package com.vinctus.ml_toolbox
 
 import org.scalajs.dom
-import org.scalajs.dom.{TextMetrics, console, document, html}
+import org.scalajs.dom.{TextMetrics, document, html}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSGlobal
