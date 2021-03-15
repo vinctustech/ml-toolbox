@@ -20,9 +20,11 @@ object Plot {
   case object ABOVE extends Position
   case object BASELINE extends Position
 
-  abstract class Style
-  case object ITALIC extends Style
-  case object PLAIN extends Style
+  abstract class Style(val name: String)
+  case object ITALIC extends Style("italic")
+  case object BOLD extends Style("bold")
+  case object BOLD_ITALIC extends Style("bold italic")
+  case object PLAIN extends Style("plain")
 }
 
 class Plot(xlower: Double,
