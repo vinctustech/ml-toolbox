@@ -35,6 +35,9 @@ object PlotCanvas {
 
     // draw paths
 
+    ctx.lineCap = "square"
+    ctx.lineJoin = "round"
+
     plot.pathsIterator foreach { p =>
       ctx.beginPath()
       val (x, y) = p.start
@@ -48,6 +51,29 @@ object PlotCanvas {
       ctx.strokeStyle = f"#${p.color}%06x"
       ctx.lineWidth = p.width
       ctx.stroke()
+    }
+
+    // draw text
+    plot.textsIterator foreach {
+      case plot.Text(s, x, y, color, style, pos) =>
+        ctx.font = s"${if (style != Plot.PLAIN) style.name else ""} ${plot.fontSize}px serif"
+
+        val metrics = ctx.measureText(s).asInstanceOf[js.Dynamic]
+
+        val (textWidth, textHeight) =
+          ((metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight).asInstanceOf[Double],
+           (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent).asInstanceOf[Double])
+
+        val (xp, yp) =
+          pos match {
+            case Plot.ABOVE => (x - textWidth / 2, y)
+            case Plot.BELOW => (x - textWidth / 2, y + textHeight)
+            case Plot.RIGHT => (x, y - textHeight / 2)
+            case Plot.LEFT  => (x - textWidth, y + textHeight / 2)
+          }
+
+        ctx.fillStyle = f"#$color%06x"
+        ctx.fillText(s, xp, yp)
     }
 
   }

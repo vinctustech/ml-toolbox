@@ -5,7 +5,7 @@ import com.vinctus.ml_toolbox.PlotPanel.glyphVector
 
 import java.awt.{BasicStroke, Color, Font, RenderingHints}
 import java.awt.font.{FontRenderContext, GlyphVector}
-import java.awt.geom.{Line2D, Path2D, Rectangle2D}
+import java.awt.geom.{Ellipse2D, Line2D, Path2D, Rectangle2D}
 import scala.swing.{Graphics2D, Panel}
 import scala.swing.Swing.EtchedBorder
 import scala.swing.Swing._
@@ -49,12 +49,10 @@ class PlotPanel(plot: Plot) extends Panel {
     g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE)
 
     // draw points
-    g.setStroke(new BasicStroke(plot.pointSize.toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
-
     plot.pointsIterator foreach {
       case plot.Point(x, y, c) =>
         g.setColor(new Color(c))
-        g.draw(new Line2D.Double(x, y, x, y))
+        g.fill(new Ellipse2D.Double(x - plot.pointSize / 2, y - plot.pointSize / 2, plot.pointSize, plot.pointSize))
     }
 
     // draw paths
@@ -69,7 +67,7 @@ class PlotPanel(plot: Plot) extends Panel {
       }
 
       g.setColor(new Color(p.color))
-      g.setStroke(new BasicStroke(p.width.toFloat, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
+      g.setStroke(new BasicStroke(p.width.toFloat, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND))
       g.draw(path)
     }
 
