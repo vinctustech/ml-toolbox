@@ -29,8 +29,8 @@ object GradientDescent extends Optimizer {
       params -= step
       i += 1
 
-      if (done)
-        println((i, step, step.norm))
+//      if (done)
+//        println((i, step, step.norm))
     }
 
     params

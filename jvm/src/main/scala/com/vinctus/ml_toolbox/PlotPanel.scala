@@ -35,10 +35,10 @@ object PlotPanel {
 
 class PlotPanel(plot: Plot) extends Panel {
 
+  plot.onChange = () => repaint()
   background = Color.BLACK
   border = EtchedBorder
   preferredSize = (plot.width, plot.height)
-  plot.onChange = () => repaint()
 
   override protected def paintComponent(g: Graphics2D): Unit = {
     super.paintComponent(g)
