@@ -8,6 +8,8 @@ import scala.scalajs.js
 
 object PlotCanvas {
 
+  val fontName = "JetBrainsMono"
+
   type Ctx2D = dom.CanvasRenderingContext2D
 
   def apply(plot: Plot, canvas: html.Canvas): Unit = {
@@ -56,7 +58,7 @@ object PlotCanvas {
     // draw text
     plot.textsIterator foreach {
       case plot.Text(s, x, y, color, style, pos) =>
-        ctx.font = s"${if (style != Plot.PLAIN) style.name else ""} ${plot.fontSize}px serif"
+        ctx.font = s"${if (style != Plot.PLAIN) style.name else ""} ${plot.fontSize}px $fontName"
 
         val metrics = ctx.measureText(s).asInstanceOf[js.Dynamic]
 
@@ -82,7 +84,7 @@ object PlotCanvas {
     val canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
     val ctx = canvas.getContext("2d").asInstanceOf[Ctx2D]
 
-    ctx.font = s"${if (style != Plot.PLAIN) style.name else ""} ${fontSize}px serif"
+    ctx.font = s"${if (style != Plot.PLAIN) style.name else ""} ${fontSize}px $fontName"
 
     val metrics = ctx.measureText(text).asInstanceOf[js.Dynamic]
 

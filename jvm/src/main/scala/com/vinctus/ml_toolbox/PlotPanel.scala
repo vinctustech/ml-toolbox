@@ -5,7 +5,8 @@ import com.vinctus.ml_toolbox.PlotPanel.glyphVector
 
 import java.awt.{BasicStroke, Color, Font, RenderingHints}
 import java.awt.font.{FontRenderContext, GlyphVector}
-import java.awt.geom.{Ellipse2D, Line2D, Path2D, Rectangle2D}
+import java.awt.geom.{Ellipse2D, Path2D, Rectangle2D}
+import java.io.FileInputStream
 import scala.swing.{Graphics2D, Panel}
 import scala.swing.Swing.EtchedBorder
 import scala.swing.Swing._
@@ -13,6 +14,14 @@ import scala.swing.Swing._
 object PlotPanel {
 
   private val FRC = new FontRenderContext(null, true, false)
+  private val FONT = {
+    val ttf = new FileInputStream("jvm/JetBrainsMono-Regular.ttf")
+//    val ttf = new FileInputStream("jvm/AndBasR.ttf")
+    val res = Font.createFont(Font.TRUETYPE_FONT, ttf)
+
+    ttf.close()
+    res
+  }
   private val STYLE_MAP =
     Map[Plot.Style, Int](
       Plot.PLAIN -> Font.PLAIN,
@@ -20,7 +29,8 @@ object PlotPanel {
     )
 
   def glyphVector(text: String, style: Style, fontSize: Int): (GlyphVector, Rectangle2D) = {
-    val gv = new Font(Font.SERIF, PlotPanel.STYLE_MAP(style), fontSize).createGlyphVector(PlotPanel.FRC, text)
+    val gv = /*new Font(Font.SERIF, PlotPanel.STYLE_MAP(style), fontSize)*/
+    FONT.deriveFont(fontSize.toFloat).createGlyphVector(PlotPanel.FRC, text)
 
     (gv, gv.getVisualBounds)
   }
