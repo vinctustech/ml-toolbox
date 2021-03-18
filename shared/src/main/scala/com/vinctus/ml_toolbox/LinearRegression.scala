@@ -3,22 +3,42 @@ package com.vinctus.ml_toolbox
 import com.vinctus.ml_toolbox.LinearRegression.train
 import xyz.hyperreal.matrix.Matrix
 
+import scala.math.sqrt
+
 object LinearRegression {
 
   val hypothesis: Hypothesis = _ dot _
 
-  val cost: (Dataset, Vector) => Double = (ds: Dataset, coefs: Vector) => {
-    var cost = 0D
+  val sse: (Dataset, Vector) => Double = (ds: Dataset, coefs: Vector) => {
+    var sum = 0D
 
     for (i <- 1 to ds.rows) {
       val (features, target) = ds datum i
-      val error = hypothesis(coefs, features) - target
+      val error = target - hypothesis(coefs, features)
 
-      cost += error * error
+      sum += error * error
     }
 
-    cost / 2 / ds.rows
+    sum
   }
+
+  def targetMean(ds: Dataset): Double = ds.mean(ds.cols)
+
+  val ssd: (Dataset, Vector) => Double = (ds: Dataset, coefs: Vector) => {
+    val m = targetMean(ds)
+    var sum = 0D
+
+    for (i <- 1 to ds.rows) {
+      val (_, target) = ds datum i
+      val deviation = target - m
+
+      sum += deviation * deviation
+    }
+
+    sum
+  }
+
+  val rmse: (Dataset, Vector) => Double = (ds: Dataset, coefs: Vector) => sqrt(sse(ds, coefs) / ds.rows)
 
   def train(ds: Dataset,
             alpha: Double = .5,
@@ -79,9 +99,15 @@ class LinearRegression private (ts: Dataset, val coefficients: Vector) {
 
   def summary(): Unit = {}
 
-  def cost(ds: Dataset): Double = { LinearRegression.cost(ds, coefficients) }
+  def rmse(ds: Dataset): Double = { LinearRegression.rmse(ds, coefficients) }
+
+  def r2(ds: Dataset): Double = { 1 - LinearRegression.sse(ds, coefficients) / LinearRegression.ssd(ds, coefficients) }
+
+  def r2adj(ds: Dataset): Double =
+    1 - LinearRegression.sse(ds, coefficients) / LinearRegression.ssd(ds, coefficients) * (ds.rows - 1) / (ds.rows - (ds.cols - 1) - 1)
 
   def predict(features: Seq[Double]): Double = LinearRegression.hypothesis(coefficients, Matrix(features).prepend(ONE))
 
-  override def toString: String = s"coefficients: [${coefficients mkString ", "}], cost: ${cost(ts)}"
+  override def toString: String =
+    s"coefficients: [${coefficients mkString ", "}], rmse: ${rmse(ts)}, r2: ${r2(ts)}, r2adj: ${r2adj(ts)}"
 }

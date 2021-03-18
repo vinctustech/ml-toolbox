@@ -6,6 +6,8 @@ import scala.collection.mutable.ListBuffer
 import scala.math.BigDecimal.double2bigDecimal
 
 object Plot {
+  val BLACK = 0x000000
+  val WHITE = 0xFFFFFF
   val LIGHT_GRAY = 0xC0C0C0
   val RED = 0xFF0000
   val ORANGE = 0xFFA500

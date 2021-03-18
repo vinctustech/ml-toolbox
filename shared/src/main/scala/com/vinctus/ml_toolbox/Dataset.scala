@@ -18,6 +18,12 @@ class Dataset private (columns: ArraySeq[String], columnMap: Map[String, Int], v
 
   def col(name: String): Matrix[Double] = data.col(columnMap(name))
 
+  def mean(cidx: Int): Double = {
+    val c = data.col(cidx)
+
+    c.sum / c.length
+  }
+
   def rows: Int = data.rows
 
   def cols: Int = data.cols
