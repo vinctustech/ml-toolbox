@@ -8,7 +8,7 @@ import scala.scalajs.js
 
 object PlotCanvas {
 
-  val fontName = "JetBrainsMono"
+  val fontName = "Nimbus Sans L" //"GentiumPlusRegular" // "JetBrainsMono"
 
   type Ctx2D = dom.CanvasRenderingContext2D
 

@@ -7,14 +7,20 @@
                 src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/ttf/JetBrainsMono-Regular.ttf') format('truetype');
                 font-weight: 400;
                 font-style: normal;
-            }
+                }
+            @font-face {
+                font-family: 'Nimbus Sans L';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Nimbus Sans L'), url('https://fonts.cdnfonts.com/s/27440/NimbusSanL-Reg.woff') format('woff');
+                }
         </style>
         <meta charset="UTF-8">
         <title>The Scala.js Tutorial</title>
     </head>
     <body>
-        <canvas id="myCanvas">
-            <p>Add suitable fallback here.</p>
+        <canvas id="canvas">
+            <p>canvas not support</p>
         </canvas>
         <script type="text/javascript" src="target/scala-2.13/ml_toolbox-test-fastopt/main.js"></script>
     </body>

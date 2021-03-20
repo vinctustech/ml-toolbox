@@ -15,8 +15,8 @@ object PlotPanel {
 
   private val FRC = new FontRenderContext(null, true, false)
   private val FONT = {
-    val ttf = new FileInputStream("jvm/JetBrainsMono-Regular.ttf")
-//    val ttf = new FileInputStream("jvm/AndBasR.ttf")
+    val ttf = new FileInputStream("jvm/NimbusSans-Regular.ttf")
+//    val ttf = new FileInputStream("jvm/JetBrainsMono-Regular.ttf")
     val res = Font.createFont(Font.TRUETYPE_FONT, ttf)
 
     ttf.close()
@@ -30,7 +30,7 @@ object PlotPanel {
 
   def glyphVector(text: String, style: Style, fontSize: Int): (GlyphVector, Rectangle2D) = {
     val gv = /*new Font(Font.SERIF, PlotPanel.STYLE_MAP(style), fontSize)*/
-    FONT.deriveFont(fontSize.toFloat).createGlyphVector(PlotPanel.FRC, text)
+    FONT.deriveFont(STYLE_MAP(style), fontSize.toFloat).createGlyphVector(PlotPanel.FRC, text)
 
     (gv, gv.getVisualBounds)
   }

@@ -18,7 +18,7 @@ object Main extends App {
 //    targetNode.appendChild(parNode)
 //  }
 
-  val canvas = document.getElementById("myCanvas").asInstanceOf[html.Canvas]
+  val canvas = document.getElementById("canvas").asInstanceOf[html.Canvas]
 
   Random.setSeed(0L)
 

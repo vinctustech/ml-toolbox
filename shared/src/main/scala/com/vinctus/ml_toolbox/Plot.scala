@@ -40,7 +40,7 @@ class Plot(xlower: Double,
            ylabels: Double = 1,
            val grid: Boolean = true,
            val pointSize: Int = 8,
-           val fontSize: Int = 12) {
+           val fontSize: Int = 14) {
 
   val DEFAULT_LINE_WIDTH = 2
 
